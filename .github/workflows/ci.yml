@@ -32,8 +32,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential ninja-build pkg-config \
             mecab libmecab-dev mecab-ipadic-utf8 \
-            cabocha libcabocha-dev libcurl4-openssl-dev \
-            libtree-sitter-dev
+            libcurl4-openssl-dev libtree-sitter-dev \
+            git autoconf automake libtool
 
       - name: Install deps (macOS)
         if: ${{ matrix.os == 'macos-latest' }}
@@ -43,12 +43,24 @@ jobs:
 
       - name: Install deps (Windows - MSYS2)
         if: ${{ matrix.os == 'windows-latest' }}
-        shell: msys2 {0}
-        run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-pkg-config
-          pacman -S --noconfirm mingw-w64-x86_64-mecab mingw-w64-x86_64-mecab-ipadic mingw-w64-x86_64-cabocha
-          pacman -S --noconfirm mingw-w64-x86_64-curl mingw-w64-x86_64-tree-sitter
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-mecab
+            mingw-w64-x86_64-mecab-ipadic
+            mingw-w64-x86_64-curl
+            mingw-w64-x86_64-tree-sitter
+            git
+            autoconf
+            automake
+            libtool
+            make
 
       - name: Install tree-sitter CLI (non-Windows)
         if: ${{ matrix.os != 'windows-latest' }}
@@ -61,6 +73,46 @@ jobs:
         run: |
           npm install -g tree-sitter-cli
           echo "PATH=$(npm prefix -g)\bin;$env:PATH" >> $env:GITHUB_ENV
+
+      - name: Build CRF++ (Ubuntu)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          git clone https://github.com/taku910/crfpp.git
+          cd crfpp
+          ./configure --prefix=/usr
+          make -j2
+          sudo make install
+          sudo ldconfig
+
+      - name: Build CaboCha (Ubuntu)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          git clone https://github.com/taku910/cabocha.git
+          cd cabocha
+          ./configure --with-charset=UTF8 --prefix=/usr
+          make -j2
+          sudo make install
+          sudo ldconfig
+
+      - name: Build CRF++ (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/taku910/crfpp.git
+          cd crfpp
+          ./configure --prefix=/mingw64
+          make -j2
+          make install
+
+      - name: Build CaboCha (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/taku910/cabocha.git
+          cd cabocha
+          ./configure --with-charset=UTF8 --prefix=/mingw64
+          make -j2
+          make install
 
       - name: Configure (CMake, non-Windows)
         if: ${{ matrix.os != 'windows-latest' }}
