@@ -58,8 +58,10 @@ jobs:
         run: |
           git clone https://github.com/taku910/mecab.git
           cd mecab/mecab
-          export LIBTOOLIZE=glibtoolize
-          export LIBTOOL=glibtool
+          export LIBTOOL_DIR="$(brew --prefix libtool)/bin"
+          export PATH="${LIBTOOL_DIR}:$PATH"
+          export LIBTOOLIZE="${LIBTOOL_DIR}/glibtoolize"
+          export LIBTOOL="${LIBTOOL_DIR}/glibtool"
           ./autogen.sh
           ./configure --prefix=/usr/local --with-charset=UTF8
           make -j2
@@ -218,9 +220,9 @@ jobs:
           sed -i '/winmain.h/d' crf_learn.cpp crf_test.cpp
           mkdir -p m4
           autoreconf -i
-          ./configure --prefix=/mingw64 CXXFLAGS="-std=c++11"
-          make -j2
-          make install
+          ./configure --prefix=/mingw64 --disable-shared CXXFLAGS="-std=c++11"
+          make -j2 libcrfpp.la
+          make install-libLTLIBRARIES install-includeHEADERS
 
       - name: Build CaboCha (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
