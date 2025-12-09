@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y build-essential ninja-build pkg-config \
             mecab libmecab-dev mecab-ipadic-utf8 \
             libcurl4-openssl-dev libtree-sitter-dev \
-            git autoconf automake libtool
+            git autoconf automake libtool patch
 
       - name: Install deps (macOS)
         if: ${{ matrix.os == 'macos-latest' }}
@@ -52,8 +52,6 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-mecab
-            mingw-w64-x86_64-mecab-ipadic
             mingw-w64-x86_64-curl
             mingw-w64-x86_64-tree-sitter
             git
@@ -76,11 +74,34 @@ jobs:
           $binDir = "$(npm prefix -g)\bin"
           echo "PATH=$binDir;$env:PATH" >> $env:GITHUB_ENV
 
+      - name: Build MeCab (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/taku910/mecab.git
+          cd mecab/mecab
+          ./autogen.sh
+          ./configure --prefix=/mingw64 --with-charset=UTF8
+          make -j2
+          make install
+
+      - name: Build MeCab IPADIC (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: msys2 {0}
+        run: |
+          cd mecab/mecab-ipadic
+          ./configure --prefix=/mingw64 --with-charset=utf8 --with-mecab-config=/mingw64/bin/mecab-config
+          make -j2
+          make install
+
       - name: Build CRF++ (Ubuntu)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           git clone https://github.com/taku910/crfpp.git
           cd crfpp
+          patch -p1 < ../crfpp_fix.patch
+          sed -i 's/winmain.h //g' Makefile.am Makefile.in
+          sed -i '/winmain.h/d' crf_learn.cpp crf_test.cpp
           ./configure --prefix=/usr CXXFLAGS="-std=c++11"
           make -j2
           sudo make install
@@ -102,6 +123,9 @@ jobs:
         run: |
           git clone https://github.com/taku910/crfpp.git
           cd crfpp
+          patch -p1 < ../crfpp_fix.patch
+          sed -i 's/winmain.h //g' Makefile.am Makefile.in
+          sed -i '/winmain.h/d' crf_learn.cpp crf_test.cpp
           ./configure --prefix=/mingw64 --with-charset=UTF8 CXXFLAGS="-std=c++11"
           make -j2
           make install
