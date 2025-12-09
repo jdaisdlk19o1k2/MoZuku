@@ -100,8 +100,9 @@ jobs:
           if [ -f "$ICONV_M4" ]; then
             cp "$ICONV_M4" m4/
           fi
+          export ACLOCAL="aclocal -I m4"
           aclocal -I m4
-          autoreconf -i
+          ACLOCAL="aclocal -I m4" autoreconf -i
           ./configure --with-charset=utf8 --with-mecab-config=/usr/local/bin/mecab-config --with-crfpp-config=/usr/local/bin/crf-config --prefix=/usr/local CXXFLAGS="-std=c++11"
           make -j2
           sudo make install
@@ -189,6 +190,7 @@ jobs:
         run: |
           git clone https://github.com/taku910/crfpp.git
           cd crfpp
+          sed -i 's/\r$//' ../patches/crfpp_fix.patch
           patch -p1 < ../patches/crfpp_fix.patch
           sed -i 's/winmain.h //g' Makefile.am Makefile.in
           sed -i '/winmain.h/d' crf_learn.cpp crf_test.cpp
@@ -250,6 +252,7 @@ jobs:
         run: |
           git clone https://github.com/taku910/cabocha.git
           cd cabocha
+          sed -i 's/\r$//' ../patches/cabocha_win_fix.patch
           patch -p1 -i ../patches/cabocha_win_fix.patch
           autoreconf -i
           ./configure --with-charset=UTF8 --with-mecab-config=/mingw64/bin/mecab-config --with-crfpp-config=/mingw64/bin/crf-config --prefix=/mingw64 CXXFLAGS="-std=c++11"
