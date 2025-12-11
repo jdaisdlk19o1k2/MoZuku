@@ -94,16 +94,13 @@ jobs:
           export LIBTOOL="${LIBTOOL_DIR}/glibtool"
           export ACLOCAL_PATH="$(brew --prefix gettext)/share/aclocal:${ACLOCAL_PATH}"
           mkdir -p m4
-          sed -i '' '1im4_ifndef([AM_ICONV],[AC_DEFUN([AM_ICONV],[])])' configure.in
-          echo 'AC_DEFUN([AM_ICONV], [])' > m4/am_iconv.m4
-          mkdir -p m4
+          printf 'AC_DEFUN([AM_ICONV], [])\n' > m4/am_iconv.m4
           ICONV_M4="$(brew --prefix gettext)/share/aclocal/iconv.m4"
           if [ -f "$ICONV_M4" ]; then
             cp "$ICONV_M4" m4/
           fi
           export ACLOCAL="aclocal -I m4"
-          aclocal -I m4
-          ACLOCAL="aclocal -I m4" autoreconf -i
+          ACLOCAL="aclocal -I m4" autoreconf -fi
           ./configure --with-charset=utf8 --with-mecab-config=/usr/local/bin/mecab-config --with-crfpp-config=/usr/local/bin/crf-config --prefix=/usr/local CXXFLAGS="-std=c++11"
           make -j2
           sudo make install
@@ -255,7 +252,7 @@ jobs:
           cd cabocha
           cp ../patches/cabocha_win_fix.patch /tmp/cabocha_win_fix.patch
           tr -d '\r' < /tmp/cabocha_win_fix.patch > /tmp/cabocha_win_fix_unix.patch
-          git apply --whitespace=nowarn /tmp/cabocha_win_fix_unix.patch
+          patch -p1 -i /tmp/cabocha_win_fix_unix.patch
           autoreconf -i
           ./configure --with-charset=UTF8 --with-mecab-config=/mingw64/bin/mecab-config --with-crfpp-config=/mingw64/bin/crf-config --prefix=/mingw64 CXXFLAGS="-std=c++11"
           make -j2
