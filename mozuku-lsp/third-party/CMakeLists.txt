@@ -147,29 +147,47 @@ if(NOT CABOCHA_FOUND)
     message(STATUS "cabocha-configが見つかりません - 標準システムパスを試行中")
     message(STATUS "  CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}")
     message(STATUS "  CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}")
-    find_path(CABOCHA_INCLUDE_DIRS cabocha.h
-        HINTS
-            ${CABOCHA_INCLUDE_HINT}
-        PATHS
-            /opt/homebrew/include
-            /opt/homebrew/Cellar/cabocha/*/include
-            /usr/local/include
-            /usr/include
-            "C:/Program Files/CaboCha/sdk"
-            "C:/cabocha/sdk"
-    )
-    find_library(CABOCHA_LIBRARIES
-        NAMES cabocha libcabocha
-        HINTS
-            ${CABOCHA_LIBRARY_HINT}
-        PATHS
-            /opt/homebrew/lib
-            /opt/homebrew/Cellar/cabocha/*/lib
-            /usr/local/lib
-            /usr/lib
-            "C:/Program Files/CaboCha/sdk"
-            "C:/cabocha/sdk"
-    )
+
+    # まずHINTSのみで検索（NO_DEFAULT_PATHで他のパスを無視）
+    if(CABOCHA_INCLUDE_HINT)
+        find_path(CABOCHA_INCLUDE_DIRS cabocha.h
+            HINTS "${CABOCHA_INCLUDE_HINT}"
+            NO_DEFAULT_PATH
+        )
+    endif()
+    if(CABOCHA_LIBRARY_HINT)
+        find_library(CABOCHA_LIBRARIES
+            NAMES libcabocha cabocha
+            HINTS "${CABOCHA_LIBRARY_HINT}"
+            NO_DEFAULT_PATH
+        )
+    endif()
+
+    # HINTSで見つからなければ通常検索
+    if(NOT CABOCHA_INCLUDE_DIRS)
+        find_path(CABOCHA_INCLUDE_DIRS cabocha.h
+            PATHS
+                /opt/homebrew/include
+                /opt/homebrew/Cellar/cabocha/*/include
+                /usr/local/include
+                /usr/include
+                "C:/Program Files/CaboCha/sdk"
+                "C:/cabocha/sdk"
+        )
+    endif()
+    if(NOT CABOCHA_LIBRARIES)
+        find_library(CABOCHA_LIBRARIES
+            NAMES libcabocha cabocha
+            PATHS
+                /opt/homebrew/lib
+                /opt/homebrew/Cellar/cabocha/*/lib
+                /usr/local/lib
+                /usr/lib
+                "C:/Program Files/CaboCha/sdk"
+                "C:/cabocha/sdk"
+        )
+    endif()
+
     message(STATUS "  検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}")
     message(STATUS "  検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
     if(CABOCHA_INCLUDE_DIRS AND CABOCHA_LIBRARIES)
@@ -187,31 +205,46 @@ if(NOT CABOCHA_FOUND)
     endif()
 endif()
 
-find_path(CRFPP_INCLUDE_DIRS crfpp.h
-    HINTS
-        ${CRFPP_INCLUDE_HINT}
-    PATHS
-        /opt/homebrew/include
-        /opt/homebrew/Cellar/crf++/*/include
-        /usr/local/include
-        /usr/include
-        "C:/Program Files/CRF++/sdk"
-        "C:/crfpp/sdk"
-    PATH_SUFFIXES crf++
-)
+# まずHINTSのみで検索
+if(CRFPP_INCLUDE_HINT)
+    find_path(CRFPP_INCLUDE_DIRS crfpp.h
+        HINTS "${CRFPP_INCLUDE_HINT}"
+        NO_DEFAULT_PATH
+    )
+endif()
+if(CRFPP_LIBRARY_HINT)
+    find_library(CRFPP_LIBRARIES
+        NAMES libcrfpp crfpp
+        HINTS "${CRFPP_LIBRARY_HINT}"
+        NO_DEFAULT_PATH
+    )
+endif()
 
-find_library(CRFPP_LIBRARIES crfpp
-    NAMES crfpp libcrfpp
-    HINTS
-        ${CRFPP_LIBRARY_HINT}
-    PATHS
-        /opt/homebrew/lib
-        /opt/homebrew/Cellar/crf++/*/lib
-        /usr/local/lib
-        /usr/lib
-        "C:/Program Files/CRF++/sdk"
-        "C:/crfpp/sdk"
-)
+# HINTSで見つからなければ通常検索
+if(NOT CRFPP_INCLUDE_DIRS)
+    find_path(CRFPP_INCLUDE_DIRS crfpp.h
+        PATHS
+            /opt/homebrew/include
+            /opt/homebrew/Cellar/crf++/*/include
+            /usr/local/include
+            /usr/include
+            "C:/Program Files/CRF++/sdk"
+            "C:/crfpp/sdk"
+        PATH_SUFFIXES crf++
+    )
+endif()
+if(NOT CRFPP_LIBRARIES)
+    find_library(CRFPP_LIBRARIES
+        NAMES libcrfpp crfpp
+        PATHS
+            /opt/homebrew/lib
+            /opt/homebrew/Cellar/crf++/*/lib
+            /usr/local/lib
+            /usr/lib
+            "C:/Program Files/CRF++/sdk"
+            "C:/crfpp/sdk"
+    )
+endif()
 
 if(CRFPP_INCLUDE_DIRS AND CRFPP_LIBRARIES)
     set(CRFPP_FOUND TRUE)
