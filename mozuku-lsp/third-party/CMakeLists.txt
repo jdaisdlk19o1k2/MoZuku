@@ -2,8 +2,23 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(TREESITTER REQUIRED tree-sitter)
+set(TREESITTER_FOUND FALSE)
+set(TREESITTER_INCLUDE_DIRS "")
+set(TREESITTER_CFLAGS_OTHER "")
+set(TREESITTER_LIBRARIES "")
+set(TREESITTER_LIBRARY_DIRS "")
+
+find_package(tree-sitter CONFIG QUIET)
+if(tree-sitter_FOUND)
+    # vcpkg (MSVC) など CONFIG モードの tree-sitter を優先
+    if(TARGET tree-sitter::tree-sitter)
+        set(TREESITTER_LIBRARIES tree-sitter::tree-sitter)
+    endif()
+    set(TREESITTER_FOUND TRUE)
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(TREESITTER REQUIRED tree-sitter)
+endif()
 
 if(NOT BUILD_WITH_CABOCHA)
     set(CABOCHA_FOUND FALSE)
