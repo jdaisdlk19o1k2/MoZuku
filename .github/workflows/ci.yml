@@ -354,7 +354,7 @@ jobs:
           # Build DEFS as a single literal line (nmake friendly)
           $defs = "DEFS = -D_CRT_SECURE_NO_DEPRECATE -DDLL_EXPORT -DHAVE_GETENV -DUNICODE -D_UNICODE -DHAVE_WINDOWS_H -DHAVE_STRING_H -DHAVE_MEMSET "
           $defs += "-DMODEL_VERSION=$modelVersion "
-          $defs += "-DVERSION=\"" + $version + "\" "
+          $defs += "-DVERSION=\\\"$version\\\" "
           $defs += "-DPACKAGE=\"cabocha\" "
           $defs += "-DCABOCHA_DEFAULT_RC=\"c:\\cabocha\\etc\\cabocharc\" "
           $defs += "-DCABOCHA_DEFAULT_CHARSET=\"UTF-8\""
