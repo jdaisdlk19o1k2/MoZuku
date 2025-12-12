@@ -417,7 +417,7 @@ jobs:
         if: ${{ matrix.os != 'windows' }}
         run: |
           cd mozuku-lsp
-          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_WITH_CABOCHA=ON
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Configure (CMake, Windows)
         if: ${{ matrix.os == 'windows' }}
@@ -428,7 +428,7 @@ jobs:
           $crfppSrc = Resolve-Path "crfpp"
 
           cd mozuku-lsp
-          cmake -B build -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_WITH_CABOCHA=ON `
+          cmake -B build -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release `
             "-DCMAKE_TOOLCHAIN_FILE=$env:CMAKE_TOOLCHAIN_FILE" `
             "-DVCPKG_TARGET_TRIPLET=x86-windows" `
             "-DMECAB_INCLUDE_HINT=$mecabSrc" `

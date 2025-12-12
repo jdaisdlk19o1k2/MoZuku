@@ -32,11 +32,6 @@ else()
     endif()
 endif()
 
-if(NOT BUILD_WITH_CABOCHA)
-    set(CABOCHA_FOUND FALSE)
-    message(STATUS "BUILD_WITH_CABOCHA=OFF のためCaboCha検出をスキップします")
-endif()
-
 find_program(MECAB_CONFIG mecab-config)
 
 if(MECAB_CONFIG)
@@ -100,94 +95,92 @@ else()
     endif()
 endif()
 
-if(BUILD_WITH_CABOCHA)
-    set(CABOCHA_FOUND FALSE)
-    set(CABOCHA_INCLUDE_DIRS "")
-    set(CABOCHA_LIBRARIES "")
-    set(CABOCHA_LINK_LIBRARIES "")
-    set(CABOCHA_LIBRARY_DIRS "")
+set(CABOCHA_FOUND FALSE)
+set(CABOCHA_INCLUDE_DIRS "")
+set(CABOCHA_LIBRARIES "")
+set(CABOCHA_LINK_LIBRARIES "")
+set(CABOCHA_LIBRARY_DIRS "")
 
-    find_program(CABOCHA_CONFIG cabocha-config)
+find_program(CABOCHA_CONFIG cabocha-config)
 
-    if(CABOCHA_CONFIG)
-        execute_process(
-            COMMAND ${CABOCHA_CONFIG} --cflags
-            OUTPUT_VARIABLE CABOCHA_CFLAGS
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        execute_process(
-            COMMAND ${CABOCHA_CONFIG} --libs
-            OUTPUT_VARIABLE CABOCHA_LIBS
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
+if(CABOCHA_CONFIG)
+    execute_process(
+        COMMAND ${CABOCHA_CONFIG} --cflags
+        OUTPUT_VARIABLE CABOCHA_CFLAGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${CABOCHA_CONFIG} --libs
+        OUTPUT_VARIABLE CABOCHA_LIBS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
 
-        string(REGEX MATCHALL "-I[^ ]*" CABOCHA_INCLUDE_FLAGS "${CABOCHA_CFLAGS}")
-        foreach(flag ${CABOCHA_INCLUDE_FLAGS})
-            string(SUBSTRING ${flag} 2 -1 include_dir)
-            list(APPEND CABOCHA_INCLUDE_DIRS ${include_dir})
+    string(REGEX MATCHALL "-I[^ ]*" CABOCHA_INCLUDE_FLAGS "${CABOCHA_CFLAGS}")
+    foreach(flag ${CABOCHA_INCLUDE_FLAGS})
+        string(SUBSTRING ${flag} 2 -1 include_dir)
+        list(APPEND CABOCHA_INCLUDE_DIRS ${include_dir})
+    endforeach()
+
+    if(CABOCHA_LIBS)
+        separate_arguments(CABOCHA_LIB_FLAGS UNIX_COMMAND "${CABOCHA_LIBS}")
+        foreach(flag ${CABOCHA_LIB_FLAGS})
+            if(flag MATCHES "^-L(.+)")
+                list(APPEND CABOCHA_LIBRARY_DIRS "${CMAKE_MATCH_1}")
+            elseif(flag MATCHES "^-l(.+)")
+                list(APPEND CABOCHA_LINK_LIBRARIES "${CMAKE_MATCH_1}")
+            endif()
         endforeach()
-
-        if(CABOCHA_LIBS)
-            separate_arguments(CABOCHA_LIB_FLAGS UNIX_COMMAND "${CABOCHA_LIBS}")
-            foreach(flag ${CABOCHA_LIB_FLAGS})
-                if(flag MATCHES "^-L(.+)")
-                    list(APPEND CABOCHA_LIBRARY_DIRS "${CMAKE_MATCH_1}")
-                elseif(flag MATCHES "^-l(.+)")
-                    list(APPEND CABOCHA_LINK_LIBRARIES "${CMAKE_MATCH_1}")
-                endif()
-            endforeach()
-        endif()
-
-        if(CABOCHA_LINK_LIBRARIES)
-            set(CABOCHA_FOUND TRUE)
-            message(STATUS "cabocha-configによりCaboChaを発見:")
-            message(STATUS "  インクルードディレクトリ: ${CABOCHA_INCLUDE_DIRS}")
-            message(STATUS "  ライブラリ: ${CABOCHA_LINK_LIBRARIES}")
-            message(STATUS "  ライブラリディレクトリ: ${CABOCHA_LIBRARY_DIRS}")
-        endif()
     endif()
 
-    if(NOT CABOCHA_FOUND)
-        message(STATUS "cabocha-configが見つかりません - 標準システムパスを試行中")
-        message(STATUS "  CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}")
-        message(STATUS "  CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}")
-        find_path(CABOCHA_INCLUDE_DIRS cabocha.h
-            PATHS
-                ${CABOCHA_INCLUDE_HINT}
-                /opt/homebrew/include
-                /opt/homebrew/Cellar/cabocha/*/include
-                /usr/local/include
-                /usr/include
-                "C:/Program Files/CaboCha/sdk"
-                "C:/cabocha/sdk"
-        )
-        find_library(CABOCHA_LIBRARIES
-            NAMES cabocha libcabocha
-            PATHS
-                ${CABOCHA_LIBRARY_HINT}
-                /opt/homebrew/lib
-                /opt/homebrew/Cellar/cabocha/*/lib
-                /usr/local/lib
-                /usr/lib
-                "C:/Program Files/CaboCha/sdk"
-                "C:/cabocha/sdk"
-        )
-        message(STATUS "  検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}")
-        message(STATUS "  検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
-        if(CABOCHA_INCLUDE_DIRS AND CABOCHA_LIBRARIES)
-            set(CABOCHA_LINK_LIBRARIES ${CABOCHA_LIBRARIES})
-            set(CABOCHA_FOUND TRUE)
-            message(STATUS "システムパスでCaboChaを発見:")
-            message(STATUS "  ヘッダー: ${CABOCHA_INCLUDE_DIRS}")
-            message(STATUS "  ライブラリ: ${CABOCHA_LIBRARIES}")
-        endif()
+    if(CABOCHA_LINK_LIBRARIES)
+        set(CABOCHA_FOUND TRUE)
+        message(STATUS "cabocha-configによりCaboChaを発見:")
+        message(STATUS "  インクルードディレクトリ: ${CABOCHA_INCLUDE_DIRS}")
+        message(STATUS "  ライブラリ: ${CABOCHA_LINK_LIBRARIES}")
+        message(STATUS "  ライブラリディレクトリ: ${CABOCHA_LIBRARY_DIRS}")
     endif()
-else()
-    set(CABOCHA_FOUND FALSE)
-    set(CABOCHA_INCLUDE_DIRS "")
-    set(CABOCHA_LIBRARIES "")
-    set(CABOCHA_LINK_LIBRARIES "")
-    set(CABOCHA_LIBRARY_DIRS "")
+endif()
+
+if(NOT CABOCHA_FOUND)
+    message(STATUS "cabocha-configが見つかりません - 標準システムパスを試行中")
+    message(STATUS "  CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}")
+    message(STATUS "  CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}")
+    find_path(CABOCHA_INCLUDE_DIRS cabocha.h
+        PATHS
+            ${CABOCHA_INCLUDE_HINT}
+            /opt/homebrew/include
+            /opt/homebrew/Cellar/cabocha/*/include
+            /usr/local/include
+            /usr/include
+            "C:/Program Files/CaboCha/sdk"
+            "C:/cabocha/sdk"
+    )
+    find_library(CABOCHA_LIBRARIES
+        NAMES cabocha libcabocha
+        PATHS
+            ${CABOCHA_LIBRARY_HINT}
+            /opt/homebrew/lib
+            /opt/homebrew/Cellar/cabocha/*/lib
+            /usr/local/lib
+            /usr/lib
+            "C:/Program Files/CaboCha/sdk"
+            "C:/cabocha/sdk"
+    )
+    message(STATUS "  検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}")
+    message(STATUS "  検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
+    if(CABOCHA_INCLUDE_DIRS AND CABOCHA_LIBRARIES)
+        set(CABOCHA_LINK_LIBRARIES ${CABOCHA_LIBRARIES})
+        set(CABOCHA_FOUND TRUE)
+        message(STATUS "システムパスでCaboChaを発見:")
+        message(STATUS "  ヘッダー: ${CABOCHA_INCLUDE_DIRS}")
+        message(STATUS "  ライブラリ: ${CABOCHA_LIBRARIES}")
+    else()
+        message(FATAL_ERROR "CaboCha が見つかりません。cabocha.h または libcabocha が見つかりませんでした。\n"
+            "CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}\n"
+            "CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}\n"
+            "検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}\n"
+            "検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
+    endif()
 endif()
 
 find_path(CRFPP_INCLUDE_DIRS crfpp.h
@@ -263,33 +256,27 @@ else()
     message(FATAL_ERROR "MeCabが見つかりません - MeCab開発ライブラリをインストールしてください")
 endif()
 
-if(CABOCHA_FOUND)
-    add_library(cabocha_system INTERFACE IMPORTED GLOBAL)
+add_library(cabocha_system INTERFACE IMPORTED GLOBAL)
 
-    if(CABOCHA_INCLUDE_DIRS)
-        target_include_directories(cabocha_system INTERFACE ${CABOCHA_INCLUDE_DIRS})
-    endif()
-    if(CABOCHA_LIBRARY_DIRS)
-        target_link_directories(cabocha_system INTERFACE ${CABOCHA_LIBRARY_DIRS})
-    endif()
-    if(CABOCHA_LINK_LIBRARIES)
-        target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LINK_LIBRARIES})
-    elseif(CABOCHA_LIBRARIES)
-        target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LIBRARIES})
-    endif()
-
-    if(CRFPP_FOUND AND CRFPP_LIBRARIES)
-        get_filename_component(CRFPP_LIB_DIR ${CRFPP_LIBRARIES} DIRECTORY)
-        target_link_directories(cabocha_system INTERFACE ${CRFPP_LIB_DIR})
-        target_link_libraries(cabocha_system INTERFACE ${CRFPP_LIBRARIES})
-    endif()
-
-    message(STATUS "cabocha_systemターゲットを作成")
-else()
-    add_library(cabocha_system INTERFACE IMPORTED GLOBAL)
-    target_link_libraries(cabocha_system INTERFACE mecab_system)
-    message(STATUS "CaboChaが見つかりません - MeCabのみモードを使用")
+if(CABOCHA_INCLUDE_DIRS)
+    target_include_directories(cabocha_system INTERFACE ${CABOCHA_INCLUDE_DIRS})
 endif()
+if(CABOCHA_LIBRARY_DIRS)
+    target_link_directories(cabocha_system INTERFACE ${CABOCHA_LIBRARY_DIRS})
+endif()
+if(CABOCHA_LINK_LIBRARIES)
+    target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LINK_LIBRARIES})
+elseif(CABOCHA_LIBRARIES)
+    target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LIBRARIES})
+endif()
+
+if(CRFPP_FOUND AND CRFPP_LIBRARIES)
+    get_filename_component(CRFPP_LIB_DIR ${CRFPP_LIBRARIES} DIRECTORY)
+    target_link_directories(cabocha_system INTERFACE ${CRFPP_LIB_DIR})
+    target_link_libraries(cabocha_system INTERFACE ${CRFPP_LIBRARIES})
+endif()
+
+message(STATUS "cabocha_systemターゲットを作成")
 
 set(LATEX_PARSER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tree-sitter-latex")
 set(LATEX_PARSER_SRC "${LATEX_PARSER_DIR}/src/parser.c")

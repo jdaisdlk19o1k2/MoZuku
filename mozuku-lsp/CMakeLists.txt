@@ -7,8 +7,6 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-option(BUILD_WITH_CABOCHA "Build with CaboCha dependency parsing" ON)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(third-party/json EXCLUDE_FROM_ALL)
@@ -88,9 +86,7 @@ target_link_libraries(mozuku-lsp PRIVATE
   CURL::libcurl
 )
 
-if(CABOCHA_FOUND)
-  target_link_libraries(mozuku-lsp PRIVATE cabocha_system ${CABOCHA_LIBRARIES})
-endif()
+target_link_libraries(mozuku-lsp PRIVATE cabocha_system ${CABOCHA_LIBRARIES})
 target_include_directories(mozuku-lsp PRIVATE ${TREESITTER_INCLUDE_DIRS})
 target_compile_options(mozuku-lsp PRIVATE ${TREESITTER_CFLAGS_OTHER})
 target_link_libraries(mozuku-lsp PRIVATE ${TREESITTER_LIBRARIES})
