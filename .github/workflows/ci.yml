@@ -309,6 +309,12 @@ jobs:
         env:
           CL: /utf-8
         run: |
+          # MSVC向け: string_buffer の << オーバーロードが重複するので unsigned int を削除
+          $common = Get-Content -LiteralPath "common.h" -Raw
+          $dupPattern = "string_buffer& operator<<\(unsigned int _n\)\s*{[^}]*}\s*"
+          $common = [regex]::Replace($common, $dupPattern, "", 'Singleline')
+          Set-Content -LiteralPath "common.h" -Value $common -NoNewline -Encoding ascii
+
           nmake -f Makefile.msvc clean
           nmake -f Makefile.msvc
 
