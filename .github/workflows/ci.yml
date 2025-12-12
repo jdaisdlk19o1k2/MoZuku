@@ -134,6 +134,19 @@ jobs:
           $binDir = "$(npm prefix -g)\bin"
           echo "PATH=$binDir;$env:PATH" >> $env:GITHUB_ENV
 
+      - name: Generate tree-sitter-latex parser (non-Windows)
+        if: ${{ matrix.os != 'windows' }}
+        run: |
+          cd mozuku-lsp/third-party/tree-sitter-latex
+          tree-sitter generate
+
+      - name: Generate tree-sitter-latex parser (Windows)
+        if: ${{ matrix.os == 'windows' }}
+        shell: pwsh
+        run: |
+          cd mozuku-lsp\third-party\tree-sitter-latex
+          tree-sitter generate
+
       - name: Setup MSVC dev cmd (Windows x86)
         if: ${{ matrix.os == 'windows' }}
         uses: ilammy/msvc-dev-cmd@v1
