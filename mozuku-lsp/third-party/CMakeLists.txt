@@ -66,30 +66,24 @@ if(MECAB_CONFIG)
     message(STATUS "  リンクライブラリ: ${MECAB_LINK_LIBRARIES}")
 else()
     message(STATUS "mecab-configが見つかりません - 標準システムパスを試行中")
-    message(STATUS "  MECAB_INCLUDE_HINT: ${MECAB_INCLUDE_HINT}")
-    message(STATUS "  MECAB_LIBRARY_HINT: ${MECAB_LIBRARY_HINT}")
 
     # HINTSが設定されている場合、直接ファイルの存在を確認
     if(MECAB_INCLUDE_HINT AND EXISTS "${MECAB_INCLUDE_HINT}/mecab.h")
         set(MECAB_INCLUDE_DIRS "${MECAB_INCLUDE_HINT}")
-        message(STATUS "  mecab.h を直接発見: ${MECAB_INCLUDE_DIRS}")
     endif()
     if(MECAB_LIBRARY_HINT)
         # Windows: libmecab.lib (DLLのインポートライブラリ) を優先
         if(EXISTS "${MECAB_LIBRARY_HINT}/libmecab.lib")
             set(MECAB_LIBRARIES "${MECAB_LIBRARY_HINT}/libmecab.lib")
-            message(STATUS "  libmecab.lib を直接発見: ${MECAB_LIBRARIES}")
         elseif(EXISTS "${MECAB_LIBRARY_HINT}/mecab.lib")
             set(MECAB_LIBRARIES "${MECAB_LIBRARY_HINT}/mecab.lib")
-            message(STATUS "  mecab.lib を直接発見: ${MECAB_LIBRARIES}")
         endif()
     endif()
 
     # 直接発見できなければ find_path/find_library を試す
     if(NOT MECAB_INCLUDE_DIRS)
         find_path(MECAB_INCLUDE_DIRS mecab.h
-            HINTS
-                ${MECAB_INCLUDE_HINT}
+            HINTS ${MECAB_INCLUDE_HINT}
             PATHS
                 /opt/homebrew/include
                 /opt/homebrew/Cellar/mecab/*/include
@@ -102,8 +96,7 @@ else()
     if(NOT MECAB_LIBRARIES)
         find_library(MECAB_LIBRARIES
             NAMES libmecab mecab
-            HINTS
-                ${MECAB_LIBRARY_HINT}
+            HINTS ${MECAB_LIBRARY_HINT}
             PATHS
                 /opt/homebrew/lib
                 /opt/homebrew/Cellar/mecab/*/lib
@@ -114,8 +107,6 @@ else()
         )
     endif()
 
-    message(STATUS "  検索結果 - INCLUDE: ${MECAB_INCLUDE_DIRS}")
-    message(STATUS "  検索結果 - LIBRARY: ${MECAB_LIBRARIES}")
     if(MECAB_INCLUDE_DIRS AND MECAB_LIBRARIES)
         set(MECAB_FOUND TRUE)
         message(STATUS "システムパスでMeCabを発見:")
@@ -172,21 +163,16 @@ endif()
 
 if(NOT CABOCHA_FOUND)
     message(STATUS "cabocha-configが見つかりません - 標準システムパスを試行中")
-    message(STATUS "  CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}")
-    message(STATUS "  CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}")
 
     # HINTSが設定されている場合、直接ファイルの存在を確認
     if(CABOCHA_INCLUDE_HINT AND EXISTS "${CABOCHA_INCLUDE_HINT}/cabocha.h")
         set(CABOCHA_INCLUDE_DIRS "${CABOCHA_INCLUDE_HINT}")
-        message(STATUS "  cabocha.h を直接発見: ${CABOCHA_INCLUDE_DIRS}")
     endif()
     if(CABOCHA_LIBRARY_HINT)
         if(EXISTS "${CABOCHA_LIBRARY_HINT}/libcabocha.lib")
             set(CABOCHA_LIBRARIES "${CABOCHA_LIBRARY_HINT}/libcabocha.lib")
-            message(STATUS "  libcabocha.lib を直接発見: ${CABOCHA_LIBRARIES}")
         elseif(EXISTS "${CABOCHA_LIBRARY_HINT}/cabocha.lib")
             set(CABOCHA_LIBRARIES "${CABOCHA_LIBRARY_HINT}/cabocha.lib")
-            message(STATUS "  cabocha.lib を直接発見: ${CABOCHA_LIBRARIES}")
         endif()
     endif()
 
@@ -230,8 +216,6 @@ if(NOT CABOCHA_FOUND)
         )
     endif()
 
-    message(STATUS "  検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}")
-    message(STATUS "  検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
     if(CABOCHA_INCLUDE_DIRS AND CABOCHA_LIBRARIES)
         set(CABOCHA_LINK_LIBRARIES ${CABOCHA_LIBRARIES})
         set(CABOCHA_FOUND TRUE)
@@ -239,11 +223,7 @@ if(NOT CABOCHA_FOUND)
         message(STATUS "  ヘッダー: ${CABOCHA_INCLUDE_DIRS}")
         message(STATUS "  ライブラリ: ${CABOCHA_LIBRARIES}")
     else()
-        message(FATAL_ERROR "CaboCha が見つかりません。cabocha.h または libcabocha が見つかりませんでした。\n"
-            "CABOCHA_INCLUDE_HINT: ${CABOCHA_INCLUDE_HINT}\n"
-            "CABOCHA_LIBRARY_HINT: ${CABOCHA_LIBRARY_HINT}\n"
-            "検索結果 - INCLUDE: ${CABOCHA_INCLUDE_DIRS}\n"
-            "検索結果 - LIBRARY: ${CABOCHA_LIBRARIES}")
+        message(FATAL_ERROR "CaboCha が見つかりません。cabocha.h または libcabocha が見つかりませんでした。")
     endif()
 endif()
 
