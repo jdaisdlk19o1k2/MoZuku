@@ -170,7 +170,7 @@ jobs:
         if: ${{ matrix.os == 'windows' }}
         shell: pwsh
         run: |
-          .\vcpkg\vcpkg.exe install tree-sitter:x86-windows curl:x86-windows
+          .\vcpkg\vcpkg.exe install tree-sitter:x86-windows curl:x86-windows libiconv:x86-windows
 
       - name: Checkout MeCab (Windows, MSVC)
         if: ${{ matrix.os == 'windows' }}

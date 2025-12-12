@@ -99,6 +99,10 @@ target_link_libraries(mozuku-lsp PRIVATE Threads::Threads)
 
 if(APPLE)
     target_link_libraries(mozuku-lsp PRIVATE "-liconv")
+elseif(WIN32)
+    # Windows: vcpkg の Iconv を使用
+    find_package(Iconv REQUIRED)
+    target_link_libraries(mozuku-lsp PRIVATE Iconv::Iconv)
 elseif(UNIX)
     find_library(RT_LIBRARY rt)
     if(RT_LIBRARY)
