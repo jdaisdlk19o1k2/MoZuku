@@ -51,14 +51,19 @@
             version = "0.0.1";
             src = ./mozuku-lsp;
 
-	    nativeBuildInputs = with pkgs; [
-	      cmake
-	    ];
+            nativebuildinputs = with pkgs; [
+              cmake
+              pkg-config
+            ];
 
-	    buildInputs = [
-	      crfpp
-	      cabocha
-	    ];
+            buildInputs = with pkgs; [
+              nlohmann_json
+              mecab
+              tree-sitter
+
+              crfpp
+              cabocha
+            ];
 
             buildPhase = ''
 	    '';
@@ -70,17 +75,19 @@
           crfpp = stdenv.mkDerivation {
             pname = "crfpp";
             version = "0.58";
-            src = sources.crfpp.src; 
+            src = sources.crfpp.src;
 
             nativeBuildInputs = with pkgs; [
               autoconf
               automake
               libtool
               pkg-config
-	      gettext
             ];
 
-	    dontUseAutoreconf = true;
+            buildInputs = with pkgs; [
+            ];
+
+            configureFlags = [ ];
 
             buildPhase = ''
               ./configure --prefix=$out
@@ -103,19 +110,18 @@
           cabocha = stdenv.mkDerivation {
             pname = "cabocha";
             version = "0.69";
-            src = sources.cabocha.src; 
+            src = sources.cabocha.src;
 
             nativeBuildInputs = with pkgs; [
-              autoconf
-              automake
-              libtool
               pkg-config
-	      gettext
+              automake
             ];
 
             buildInputs = with pkgs; [
               mecab
               crfpp
+              libiconv
+              gettext
             ];
 
             configureFlags = [
@@ -124,9 +130,7 @@
             ];
 
             preConfigure = ''
-	      # rm -f aclocal.m4 configure config.h.in
-              # autoreconf -fi
-	      ./configure
+              cp ${pkgs.automake}/share/automake-*/install-sh .
             '';
 
             enableParallelBuilding = true;
@@ -170,29 +174,31 @@
 
           devenv.shells.default = {
             packages = with pkgs; [
-	      nil
+              nil
 
-	      cmake
-	      curlFull
+              cmake
+              curlFull
 
-	      # dependencies
-	      tree-sitter
-	      mecab
-	      crfpp
-	      cabocha
-	    ];
+              # dependencies
+              tree-sitter
+              mecab
+              crfpp
+              cabocha
+            ];
 
             languages = {
               cplusplus = {
                 enable = true;
-                # version = "8.4";
               };
             };
 
             enterShell = '''';
           };
 
-          packages.default = mozuku-lsp;
+          packages = {
+            default = mozuku-lsp;
+            inherit crfpp cabocha;
+          };
         };
     };
 }
