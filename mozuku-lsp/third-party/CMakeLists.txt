@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-<<<<<<< HEAD
-find_package(PkgConfig REQUIRED)
-=======
+# tree-sitter の検索
 set(TREESITTER_FOUND FALSE)
 set(TREESITTER_INCLUDE_DIRS "")
 set(TREESITTER_CFLAGS_OTHER "")
@@ -34,8 +32,8 @@ else()
         endif()
     endif()
 endif()
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
 
+# MeCab の検索
 find_program(MECAB_CONFIG mecab-config)
 
 if(MECAB_CONFIG)
@@ -69,18 +67,6 @@ if(MECAB_CONFIG)
     message(STATUS "  ライブラリディレクトリ: ${MECAB_LIBRARY_DIRS}")
     message(STATUS "  リンクライブラリ: ${MECAB_LINK_LIBRARIES}")
 else()
-<<<<<<< HEAD
-    message(STATUS "mecab-configが見つかりません。標準システムパスを試行中...")
-
-    find_path(MECAB_INCLUDE_DIRS mecab.h
-        HINTS ${MECAB_INCLUDE_HINT}
-    )
-
-    find_library(MECAB_LIBRARIES
-        NAMES libmecab mecab
-        HINTS ${MECAB_LIBRARY_HINT}
-    )
-=======
     message(STATUS "mecab-configが見つかりません - 標準システムパスを試行中")
 
     # HINTSが設定されている場合、直接ファイルの存在を確認
@@ -122,7 +108,6 @@ else()
                 "C:/mecab/sdk"
         )
     endif()
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
 
     if(MECAB_INCLUDE_DIRS AND MECAB_LIBRARIES)
         set(MECAB_FOUND TRUE)
@@ -132,28 +117,7 @@ else()
     endif()
 endif()
 
-<<<<<<< HEAD
-find_program(CABOCHA_CONFIG cabocha-config)
-
-if(CABOCHA_CONFIG)
-    execute_process(
-        COMMAND ${CABOCHA_CONFIG} --cflags
-        OUTPUT_VARIABLE CABOCHA_CFLAGS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    execute_process(
-        COMMAND ${CABOCHA_CONFIG} --libs
-        OUTPUT_VARIABLE CABOCHA_LIBS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
-    string(REGEX MATCHALL "-I[^ ]*" CABOCHA_INCLUDE_FLAGS "${CABOCHA_CFLAGS}")
-    foreach(flag ${CABOCHA_INCLUDE_FLAGS})
-        string(SUBSTRING ${flag} 2 -1 include_dir)
-        list(APPEND CABOCHA_INCLUDE_DIRS ${include_dir})
-    endforeach()
-
-=======
+# CaboCha の検索
 set(CABOCHA_FOUND FALSE)
 set(CABOCHA_INCLUDE_DIRS "")
 set(CABOCHA_LIBRARIES "")
@@ -180,7 +144,6 @@ if(CABOCHA_CONFIG)
         list(APPEND CABOCHA_INCLUDE_DIRS ${include_dir})
     endforeach()
 
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
     if(CABOCHA_LIBS)
         separate_arguments(CABOCHA_LIB_FLAGS UNIX_COMMAND "${CABOCHA_LIBS}")
         foreach(flag ${CABOCHA_LIB_FLAGS})
@@ -190,30 +153,6 @@ if(CABOCHA_CONFIG)
                 list(APPEND CABOCHA_LINK_LIBRARIES "${CMAKE_MATCH_1}")
             endif()
         endforeach()
-<<<<<<< HEAD
-    endif()
-
-    if(CABOCHA_LINK_LIBRARIES)
-        set(CABOCHA_FOUND TRUE)
-        message(STATUS "cabocha-configによりCaboChaを発見:")
-        message(STATUS "  インクルードディレクトリ: ${CABOCHA_INCLUDE_DIRS}")
-        message(STATUS "  ライブラリ: ${CABOCHA_LINK_LIBRARIES}")
-        message(STATUS "  ライブラリディレクトリ: ${CABOCHA_LIBRARY_DIRS}")
-    endif()
-endif()
-
-if(NOT CABOCHA_FOUND)
-    message(STATUS "cabocha-configが見つかりません。標準システムパスを試行中。")
-
-    find_path(CABOCHA_INCLUDE_DIRS cabocha.h
-        HINTS ${CABOCHA_INCLUDE_HINT}
-    )
-
-    find_library(CABOCHA_LIBRARIES
-        NAMES libcabocha cabocha
-        HINTS ${CABOCHA_LIBRARY_HINT}
-    )
-=======
     endif()
 
     if(CABOCHA_LINK_LIBRARIES)
@@ -279,7 +218,6 @@ if(NOT CABOCHA_FOUND)
                 "C:/cabocha/sdk"
         )
     endif()
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
 
     if(CABOCHA_INCLUDE_DIRS AND CABOCHA_LIBRARIES)
         set(CABOCHA_LINK_LIBRARIES ${CABOCHA_LIBRARIES})
@@ -292,17 +230,7 @@ if(NOT CABOCHA_FOUND)
     endif()
 endif()
 
-<<<<<<< HEAD
-find_path(CRFPP_INCLUDE_DIRS crfpp.h
-    HINTS ${CRFPP_INCLUDE_HINT}
-    PATH_SUFFIXES crf++
-)
-
-find_library(CRFPP_LIBRARIES
-    NAMES libcrfpp crfpp
-    HINTS ${CRFPP_LIBRARY_HINT}
-)
-=======
+# CRF++ の検索
 # まずHINTSのみで検索
 if(CRFPP_INCLUDE_HINT)
     find_path(CRFPP_INCLUDE_DIRS crfpp.h
@@ -343,7 +271,6 @@ if(NOT CRFPP_LIBRARIES)
             "C:/crfpp/sdk"
     )
 endif()
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
 
 if(CRFPP_INCLUDE_DIRS AND CRFPP_LIBRARIES)
     set(CRFPP_FOUND TRUE)
@@ -354,6 +281,7 @@ else()
     message(STATUS "CRF++が見つかりません（オプション）")
 endif()
 
+# 変数をPARENT_SCOPEに設定
 set(MECAB_FOUND ${MECAB_FOUND} PARENT_SCOPE)
 set(MECAB_INCLUDE_DIRS ${MECAB_INCLUDE_DIRS} PARENT_SCOPE)
 set(MECAB_LIBRARIES ${MECAB_LIBRARIES} PARENT_SCOPE)
@@ -367,6 +295,7 @@ set(CRFPP_FOUND ${CRFPP_FOUND} PARENT_SCOPE)
 set(CRFPP_INCLUDE_DIRS ${CRFPP_INCLUDE_DIRS} PARENT_SCOPE)
 set(CRFPP_LIBRARIES ${CRFPP_LIBRARIES} PARENT_SCOPE)
 
+# MeCab ターゲットの作成
 if(MECAB_FOUND)
     add_library(mecab_system INTERFACE IMPORTED GLOBAL)
 
@@ -389,21 +318,11 @@ else()
     message(FATAL_ERROR "MeCabが見つかりません。MeCab開発ライブラリをインストールしてください。")
 endif()
 
+# CaboCha ターゲットの作成
 add_library(cabocha_system INTERFACE IMPORTED GLOBAL)
 
 if(CABOCHA_INCLUDE_DIRS)
     target_include_directories(cabocha_system INTERFACE ${CABOCHA_INCLUDE_DIRS})
-<<<<<<< HEAD
-endif()
-if(CABOCHA_LIBRARY_DIRS)
-    target_link_directories(cabocha_system INTERFACE ${CABOCHA_LIBRARY_DIRS})
-endif()
-if(CABOCHA_LINK_LIBRARIES)
-    target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LINK_LIBRARIES})
-elseif(CABOCHA_LIBRARIES)
-    target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LIBRARIES})
-=======
->>>>>>> 5b3c7075b76d0d8fb53669399a0810c7b22ebda4
 endif()
 if(CABOCHA_LIBRARY_DIRS)
     target_link_directories(cabocha_system INTERFACE ${CABOCHA_LIBRARY_DIRS})
@@ -413,14 +332,6 @@ if(CABOCHA_LINK_LIBRARIES)
 elseif(CABOCHA_LIBRARIES)
     target_link_libraries(cabocha_system INTERFACE ${CABOCHA_LIBRARIES})
 endif()
-
-if(CRFPP_FOUND AND CRFPP_LIBRARIES)
-    get_filename_component(CRFPP_LIB_DIR ${CRFPP_LIBRARIES} DIRECTORY)
-    target_link_directories(cabocha_system INTERFACE ${CRFPP_LIB_DIR})
-    target_link_libraries(cabocha_system INTERFACE ${CRFPP_LIBRARIES})
-endif()
-
-message(STATUS "cabocha_systemターゲットを作成")
 
 if(CRFPP_FOUND AND CRFPP_LIBRARIES)
     get_filename_component(CRFPP_LIB_DIR ${CRFPP_LIBRARIES} DIRECTORY)
