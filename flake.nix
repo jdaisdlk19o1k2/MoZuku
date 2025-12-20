@@ -1,5 +1,5 @@
 {
-  description = "A basic flake to with flake-parts";
+  description = "An LSP server for parsing and proofreading Japanese text.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
