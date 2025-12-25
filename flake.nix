@@ -45,6 +45,7 @@
           crossTargets = [
             "musl64" # x86_64-linux with musl
             "aarch64-multiplatform" # aarch64-linux
+	    "aarch64-multiplatform-musl" # aarch64-unknown- linux-musl
           ];
 
           mkPackagesFor =
