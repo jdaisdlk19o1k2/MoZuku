@@ -59,14 +59,15 @@
                 cmakeGenerator = "Ninja";
 
                 nativeBuildInputs = with pkgs; [
-                  mold-wrapped
                   cmake
                   ninja
                   pkg-config
                   tree-sitter
+                ] ++ pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform) [
+                  mold-wrapped
                 ];
 
-                NIX_LDFLAGS = [
+                NIX_LDFLAGS = pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform) [
                   "-fuse-ld=mold"
                 ];
 
