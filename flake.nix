@@ -117,6 +117,8 @@
                   pkg-config
                 ];
 
+                CXXFLAGS = "-std=c++11";
+
                 patchPhase = ''
                   runHook prePatch
 
@@ -163,6 +165,8 @@
                   crfpp
                   libiconv
                 ];
+
+                CXXFLAGS = "-std=c++11";
 
                 configureFlags = [
                   "--with-charset=UTF8"
