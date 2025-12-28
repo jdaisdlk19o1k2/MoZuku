@@ -63,11 +63,11 @@
                   ninja
                   pkg-config
                   tree-sitter
-                ] ++ pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform) [
+                ] ++ pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform && stdenv.isLinux) [
                   mold-wrapped
                 ];
 
-                NIX_LDFLAGS = pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform) [
+                NIX_LDFLAGS = pkgs.lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform && stdenv.isLinux) [
                   "-fuse-ld=mold"
                 ];
 
