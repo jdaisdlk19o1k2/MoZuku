@@ -43,7 +43,7 @@ function ensureDir(dirPath) {
   }
 }
 
-function buildMoZuKuBinary() {
+function buildMoZuKuBinary(lspSourceDir) {
   log("Building LSP server...");
 
   try {
@@ -121,7 +121,7 @@ function buildForCurrentPlatform() {
   if (fs.existsSync(path.join(__dirname, "..", "result", "bin"))) {
 
   } else {
-    buildMoZuKuBinary()
+    buildMoZuKuBinary(lspSourceDir)
   }
 
   // Copy the built executable

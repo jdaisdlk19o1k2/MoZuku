@@ -117,8 +117,6 @@
                   pkg-config
                 ];
 
-                CXXFLAGS = "-std=c++11";
-
                 patchPhase = ''
                   runHook prePatch
 
@@ -137,6 +135,10 @@
                 preConfigure = ''
                   rm -f configure
                   autoreconf -vfi
+                '';
+
+                preBuild = ''
+                  makeFlagsArray+=(CXXFLAGS="-std=c++11 -O2 -Wall")
                 '';
 
                 enableParallelBuilding = true;
@@ -166,8 +168,6 @@
                   libiconv
                 ];
 
-                CXXFLAGS = "-std=c++11";
-
                 configureFlags = [
                   "--with-charset=UTF8"
                   "--with-posset=IPA"
@@ -183,6 +183,10 @@
                     export ACLOCAL_PATH="${pkgs.gettext}/share/aclocal:$ACLOCAL_PATH"
                     autoreconf -vfi
                   fi
+                '';
+
+                preBuild = ''
+                  makeFlagsArray+=(CXXFLAGS="-std=c++11 -O2 -Wall")
                 '';
 
                 makeFlags =
